@@ -1,27 +1,29 @@
+
+import cosas.*
 import camion.*
-import cosas.* 
+
 
 describe "camion" {
   // CARGA Y DESCARGA 
   test "camion con sus primeras cargas " {
     camion.cargar(bumblebee)
-    assert.equals(#{bumblebee}, camion.cargaDelCamion())
+    assert.equals(#{bumblebee}, camion.carga())
     camion.cargar(knightRider)
-    assert.equals(#{bumblebee,knightRider}, camion.cargaDelCamion())
+    assert.equals(#{bumblebee,knightRider}, camion.carga())
     camion.descargar(bumblebee)
-    assert.equals(#{knightRider}, camion.cargaDelCamion())
+    assert.equals(#{knightRider}, camion.carga())
     camion.cargar(knightRider)
-    assert.equals(#{knightRider}, camion.cargaDelCamion())
+    assert.equals(#{knightRider}, camion.carga())
     camion.descargar(bumblebee)
-    assert.equals(#{knightRider}, camion.cargaDelCamion())
+    assert.equals(#{knightRider}, camion.carga())
   }
   // TODO PESO PAR 
   test " camion con peso par "{
     camion.cargar(bumblebee)
-    assert.equals(#{bumblebee}, camion.cargaDelCamion())
+    assert.equals(#{bumblebee}, camion.carga())
     arenaAGranel.pesoNuevo(50)
     camion.cargar(arenaAGranel)
-    assert.equals(#{bumblebee,arenaAGranel}, camion.cargaDelCamion())
+    assert.equals(#{bumblebee,arenaAGranel}, camion.carga())
     assert.that(camion.contieneElPeso())
     arenaAGranel.pesoNuevo(21)
     assert.notThat(camion.contieneElPeso())
@@ -29,26 +31,26 @@ describe "camion" {
   // PESO Y EXCESO DE PESO 
   test "camion con peso sin exceso "{
     camion.cargar(bumblebee)
-    assert.equals(#{bumblebee}, camion.cargaDelCamion())
+    assert.equals(#{bumblebee}, camion.carga())
     camion.cargar(paqueteDeLadrillos)
-    assert.equals(#{bumblebee,paqueteDeLadrillos},camion.cargaDelCamion())
+    assert.equals(#{bumblebee,paqueteDeLadrillos},camion.carga())
     paqueteDeLadrillos.cantidad(300)
-    camion.pesoTotalDelCamion()
+    assert.that(camion.pesoActualDeCamion())
   }
   test "camion con peso con exceso "{
     camion.cargar(bumblebee)
-    assert.equals(#{bumblebee}, camion.cargaDelCamion())
+    assert.equals(#{bumblebee}, camion.carga())
     camion.cargar(paqueteDeLadrillos)
-    assert.equals(#{bumblebee,paqueteDeLadrillos},camion.cargaDelCamion())
+    assert.equals(#{bumblebee,paqueteDeLadrillos},camion.carga())
     paqueteDeLadrillos.cantidad(400)
-    assert.throwsException({camion.pesoTotalDelCamion()})
+    assert.notThat(camion.pesoActualDeCamion())
 }
 // EL DE NIVEL 
 test "camion con carga con nivel de peligrosidad "{
   camion.cargar(bumblebee)
 camion.cargar(bateriaAntiaerea)
 camion.cargar(residuosRadiactivos)
-assert.equals(#{bumblebee,bateriaAntiaerea,residuosRadiactivos}, camion.cargaDelCamion())
+assert.equals(#{bumblebee,bateriaAntiaerea,residuosRadiactivos}, camion.carga())
 assert.equals(bateriaAntiaerea, camion.cargaConNivelDePeligrosidad(0))
 assert.equals(bumblebee, camion.cargaConNivelDePeligrosidad(15))
 assert.equals(residuosRadiactivos, camion.cargaConNivelDePeligrosidad(200))
@@ -59,5 +61,74 @@ bateriaAntiaerea.cargarConMisiles()
 assert.equals(bateriaAntiaerea, camion.cargaConNivelDePeligrosidad(100))
 }
 // COSAS PELIGROSAS
+test "cosas peligrosas cargadas"{
+camion.cargar(knightRider)
+assert.equals(#{knightRider}, camion.carga())
+camion.cargar(bateriaAntiaerea)
+assert.equals(#{knightRider,bateriaAntiaerea}, camion.carga())
+bateriaAntiaerea.cargarConMisiles()
+assert.equals(#{bateriaAntiaerea}, camion.cosasPeligrosasCargadas(15)) // es valido esto?
+assert.equals(#{bateriaAntiaerea}, camion.cosaMasPeligrosaQue(bumblebee))
+assert.equals(#{knightRider,bateriaAntiaerea}, camion.cosasPeligrosasCargadas(2))
+assert.equals(#{knightRider,bateriaAntiaerea}, camion.cosaMasPeligrosaQue(paqueteDeLadrillos))
+camion.cosasPeligrosasCargadas(200)
+camion.cosaMasPeligrosaQue(residuosRadiactivos)
+}
+test "camion puede circular en ruta "{
+  camion.cargar(bumblebee)
+  camion.cargar(paqueteDeLadrillos)
+  assert.equals(#{bumblebee,paqueteDeLadrillos}, camion.carga())
+  bumblebee.formaActual(auto)
+  paqueteDeLadrillos.cantidad(300)
+  assert.that(camion.puedeCircularEnRuta(20))
+  paqueteDeLadrillos.cantidad(400)
+  assert.notThat(camion.puedeCircularEnRuta(20))
+  bumblebee.formaActual(robot)
+  assert.notThat(camion.puedeCircularEnRuta(20))
+}
+test "contenedor portuario "{ 
+  assert.equals(100, contenedorPortuario.peso())
+  assert.equals(0, contenedorPortuario.nivelDePeligrosidad())
+  contenedorPortuario.cargar(knightRider)
+  assert.equals(#{knightRider}, contenedorPortuario.cosasCargadas())
+  contenedorPortuario.cargar(arenaAGranel)
+  arenaAGranel.pesoNuevo(50)
+  assert.equals(#{knightRider,arenaAGranel}, contenedorPortuario.cosasCargadas())
+  assert.equals(650, contenedorPortuario.peso())
+  assert.equals(10, contenedorPortuario.nivelDePeligrosidad())
+}
+test "embalaje de seguridad con knightRider"{ 
+  embalajeDeSeguridad.cargar(knightRider)
+  assert.equals(#{knightRider}, embalajeDeSeguridad.cosasCargadas())
+  assert.equals(500, embalajeDeSeguridad.peso())
+  assert.equals(5, embalajeDeSeguridad.nivelDePeligrosidad())
+}
+test "embalaje de seguridad con bumblebee"{ 
+  embalajeDeSeguridad.cargar(bumblebee)
+  assert.equals(#{bumblebee}, embalajeDeSeguridad.cosasCargadas())
+  bumblebee.formaActual(auto)
+  assert.equals(800, embalajeDeSeguridad.peso())
+  assert.equals(7.5, embalajeDeSeguridad.nivelDePeligrosidad())
+}
 
+test "Algo que pesa entre dos valores "{
+  camion.cargar(bumblebee)
+  camion.cargar(paqueteDeLadrillos)
+  assert.equals(#{bumblebee,paqueteDeLadrillos}, camion.carga())
+  paqueteDeLadrillos.cantidad(300)
+  assert.that(camion.tieneAlgoEntreLosValores(5,700))
+  assert.that(camion.tieneAlgoEntreLosValores(5,1000))
+  assert.notThat(camion.tieneAlgoEntreLosValores(900,1000))
+}
+test "la cosa mas pesada del camion "{
+  camion.cargar(bumblebee)
+  camion.cargar(paqueteDeLadrillos)
+  assert.equals(#{bumblebee,paqueteDeLadrillos}, camion.carga())
+  paqueteDeLadrillos.cantidad(300)
+  assert.equals(bumblebee, camion.cosaMasPesada())
+  camion.descargar(bumblebee)
+  camion.descargar(paqueteDeLadrillos)
+  assert.equals(#{}, camion.carga())
+  assert.throwsException({camion.cosaMasPesada()})
+}
 }

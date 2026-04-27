@@ -1,9 +1,10 @@
 import camion.* 
+
 object knightRider {
 	method peso() {
 		return 500 
 	}
-	method nivelPeligrosidad() { 
+	method nivelDePeligrosidad() { 
 		return 10 
 	}
 }
@@ -16,7 +17,7 @@ object arenaAGranel {
   method pesoNuevo(_peso) {
 	peso= _peso
   }
-  method nivelPeligrosidad() {
+  method nivelDePeligrosidad() {
 	return 1 
   }
 }
@@ -33,18 +34,6 @@ object bumblebee {
 	formaActual= _formaActual
   }
 }
-object auto {
-  method nivelDePeligrosidad() {
-	return 15
-  }
-}
-
-object robot {
-  method nivelDePeligrosidad() {
-	return 30
-  }
-}
-
 object paqueteDeLadrillos {
 	var cantidadDeLadrillos = 0
   method peso(){
@@ -95,5 +84,54 @@ object residuosRadiactivos {
   }
   method nivelDePeligrosidad() {
 	return 200
+  }
+}
+
+object auto {
+  method nivelDePeligrosidad() {
+	return 15
+  }
+}
+
+object robot {
+  method nivelDePeligrosidad() {
+	return 30
+  }
+}
+// MAS COSAS 
+object contenedorPortuario {
+  const cosas = #{}
+  method cosasCargadas() {
+    return cosas 
+  }
+  method cargar(unaCosa) {
+    cosas.add(unaCosa)
+  } 
+  method peso(){
+    return 100 + cosas.sum({cosa => cosa.peso()})
+
+  }
+  method nivelDePeligrosidad() {
+    if(!cosas.isEmpty()){ 
+    return cosas.map({cosa => cosa.nivelDePeligrosidad()}).max()
+  } else 
+   return 0
+  }
+}
+
+object embalajeDeSeguridad {
+  const cosas = #{}
+   method cosasCargadas() {
+    return cosas 
+  }
+
+  method cargar(unaCosa) {
+    cosas.add(unaCosa)
+  }
+  method peso() {
+    return cosas.sum({cosa => cosa.peso()})
+  }   
+  method nivelDePeligrosidad() {
+    return cosas.map({cosa => cosa.nivelDePeligrosidad()}).max() / 2
   }
 }
