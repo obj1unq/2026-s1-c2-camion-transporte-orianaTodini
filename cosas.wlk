@@ -53,10 +53,19 @@ object bumblebee {
   method cantidadDeBultos() {
     return 2
   }
- method efectoDelAccidente() {
-  formaActual= formaActual.tranformarse()
+  method efectoDelAccidente() {
+  formaActual.transformarse(self)
+}
+method transformateARobot() {
+    formaActual = robot
   }
+
+  method transformateAAuto() {
+    formaActual = auto
   }
+}
+  
+  
 
 object paqueteDeLadrillos {
 	var cantidadDeLadrillos = 0
@@ -82,11 +91,7 @@ object paqueteDeLadrillos {
   }
 }
   method efectoDelAccidente() {
-    if(cantidadDeLadrillos > 12){
-      cantidadDeLadrillos= cantidadDeLadrillos - 12
-    } else {
-      cantidadDeLadrillos= 0
-    }
+    cantidadDeLadrillos = (cantidadDeLadrillos - 12).max(0)
   }
   }
 
@@ -152,18 +157,18 @@ object auto {
   method nivelDePeligrosidad() {
 	return 15
   }
-   method tranformarse() {
-    return robot 
-  }
+  method transformarse(transformable) {
+  transformable.transformateARobot()
+}
 }
 
 object robot {
   method nivelDePeligrosidad() {
 	return 30
   }
-  method tranformarse() {
-    return auto 
-  }
+  method transformarse(transformable) {
+  transformable.transformateAAuto()
+}
 }
 // MAS COSAS 
 object contenedorPortuario {
@@ -193,24 +198,31 @@ object contenedorPortuario {
 }
 
 object embalajeDeSeguridad {
-  const cosas = #{}
+  var cosaEnvuelta = null
    method carga() {
-    return cosas 
+    return cosaEnvuelta
   }
 
   method cargar(unaCosa) {
-    cosas.add(unaCosa)
+    self.validarCarga()
+    cosaEnvuelta = unaCosa
+  }
+  method validarCarga() {
+   if (cosaEnvuelta != null) {
+    self.error("Ya contiene una cosa ")
+  }
   }
   method peso() {
-    return cosas.sum({cosa => cosa.peso()})
+    return cosaEnvuelta.peso()
   }   
   method nivelDePeligrosidad() {
-    return cosas.map({cosa => cosa.nivelDePeligrosidad()}).max() / 2
+    return cosaEnvuelta.nivelDePeligrosidad() / 2
   }
   method cantidadDeBultos() {
-    return 2 + cosas.sum({cosa => cosa.cantidadDeBultos()})
+    return 2 + cosaEnvuelta.cantidadDeBultos()
   }
   method efectoDelAccidente() {
     // no hace nada 
   }
 }
+

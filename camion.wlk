@@ -5,19 +5,23 @@ object camion {
 	const tara = 1000
 
 	method cargar(cosa) {
-  if (cosas.contains(cosa)) {
-    self.error("la cosa ya está cargada")
-  } else {
+	self.validarCarga(cosa)
     cosas.add(cosa)
   }
+  method validarCarga(cosa){
+	if (cosas.contains(cosa)) {
+    self.error("la cosa ya está cargada")
+	}
 }
 
 method descargar(cosa) {
-  if (!cosas.contains(cosa)) {
-    self.error("la cosa no está en el camión")
-  } else {
+	self.validarDescargar(cosa)
     cosas.remove(cosa)
   }
+method validarDescargar(cosa){
+	if (!cosas.contains(cosa)) {
+    self.error("la cosa no está en el camión")
+}
 }
 	method carga() {
 	  return cosas

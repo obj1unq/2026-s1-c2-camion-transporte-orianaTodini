@@ -104,13 +104,13 @@ test "contenedor portuario "{
 // EMBALAJE DE SEGURIDAD 
 test "embalaje de seguridad con knightRider"{ 
   embalajeDeSeguridad.cargar(knightRider)
-  assert.equals(#{knightRider}, embalajeDeSeguridad.carga())
+  assert.equals(knightRider, embalajeDeSeguridad.carga())
   assert.equals(500, embalajeDeSeguridad.peso())
   assert.equals(5, embalajeDeSeguridad.nivelDePeligrosidad())
 }
 test "embalaje de seguridad con bumblebee"{ 
   embalajeDeSeguridad.cargar(bumblebee)
-  assert.equals(#{bumblebee}, embalajeDeSeguridad.carga())
+  assert.equals(bumblebee, embalajeDeSeguridad.carga())
   bumblebee.formaActual(auto)
   assert.equals(800, embalajeDeSeguridad.peso())
   assert.equals(7.5, embalajeDeSeguridad.nivelDePeligrosidad())
